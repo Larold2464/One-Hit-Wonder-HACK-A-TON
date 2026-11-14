@@ -217,3 +217,69 @@ class SessionTimelineView(APIView):
             "session_title": session.title,
             "timeline": timeline
         })
+
+
+class UpdateConfusionLevelView(APIView):
+    def post(self, request):
+        participant_token = request.data.get("participant_token")
+        confusion_level = request.data.get("confusion_level")
+
+        # Validate required fields
+        if not participant_token or confusion_level is None:
+            return Response(
+                {"error": "Participant token and confusion level are required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Validate confusion level
+        valid_levels = [0, 1, 2, 3, 4]
+
+        try:
+            confusion_level = int(confusion_level)
+        except (ValueError, TypeError):
+            return Response(
+                {"error": "Confusion level must be an integer"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if confusion_level not in valid_levels:
+            return Response(
+                {"error": "Confusion level must be between 0 and 4"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Find participant
+        try:
+            participant = Participant.objects.select_related(
+                "session"
+            ).get(token=participant_token)
+        except (Participant.DoesNotExist, ValueError):
+            return Response(
+                {"error": "Participant not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Check if session is still active
+        if not participant.session.is_active:
+            return Response(
+                {"error": "This session has ended"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Update confusion level
+        participant.confusion_level = confusion_level
+        participant.save(update_fields=["confusion_level", "last_seen"])
+
+        return Response(
+            {
+                "message": "Confusion level updated successfully",
+                "participant": {
+                    "id": participant.id,
+                    "session_id": participant.session.id,
+                    "confusion_level": participant.confusion_level,
+                    "confusion_label": participant.get_confusion_level_display(),
+                    "last_seen": participant.last_seen
+                }
+            },
+            status=status.HTTP_200_OK
+        )

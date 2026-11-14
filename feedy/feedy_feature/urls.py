@@ -7,6 +7,7 @@ from .views import (
     SessionPulseView,
     SessionTimelineView,
     ParticipantHeartbeatView,
+    UpdateConfusionLevelView,
 )
 
 urlpatterns = [
@@ -50,4 +51,10 @@ urlpatterns = [
         name="participant-heartbeat"
     ),
 
+    # Student: Update confusion level
+    path(
+        "participants/confusion/",
+        UpdateConfusionLevelView.as_view(),
+        name="update-confusion-level"
+    ),
 ]
