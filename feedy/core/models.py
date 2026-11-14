@@ -3,7 +3,7 @@ from django.db import models
 
 
 class CustomUser(AbstractUser):
-    ROLE_SPEAKER = "speaker"
+    ROLE_SPEAKER = "Speaker"
 
     role = models.CharField(
         max_length=20,

@@ -20,4 +20,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('feedy_feature.urls')),  # Include the feedy_feature app's URLs
+    path('api/auth/', include('core.urls'))
 ]
