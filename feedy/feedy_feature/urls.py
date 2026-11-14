@@ -3,9 +3,11 @@ from django.urls import path
 from .views import (
     CreateSessionView,
     JoinSessionView,
+    CreateQuestionView,
     SessionPulseView,
     SessionTimelineView,
     ParticipantHeartbeatView,
+    UpdateConfusionLevelView,
 )
 
 urlpatterns = [
@@ -23,6 +25,11 @@ urlpatterns = [
         name="join-session"
     ),
 
+    path(
+        "questions/",
+        CreateQuestionView.as_view(),
+        name="create-question"
+        ),
     # Teacher: Get live confusion statistics
     path(
         "sessions/<int:session_id>/pulse/",
@@ -42,5 +49,12 @@ urlpatterns = [
         "participants/<uuid:token>/heartbeat/",
         ParticipantHeartbeatView.as_view(),
         name="participant-heartbeat"
+    ),
+
+    # Student: Update confusion level
+    path(
+        "participants/confusion/",
+        UpdateConfusionLevelView.as_view(),
+        name="update-confusion-level"
     ),
 ]
