@@ -11,15 +11,12 @@ def record_and_get_pulse(session):
 
     stats = active.aggregate(
         total_participants=Count("id"),
-        avg_confusion=Avg("confusion_level"),
         level_0_count=Count("id", filter=Q(confusion_level=0)),
         level_1_count=Count("id", filter=Q(confusion_level=1)),
         level_2_count=Count("id", filter=Q(confusion_level=2)),
         level_3_count=Count("id", filter=Q(confusion_level=3)),
         level_4_count=Count("id", filter=Q(confusion_level=4)),
     )
-
-    stats["avg_confusion"] = round(stats["avg_confusion"] or 0.0, 2)
 
     minute_bucket = now.replace(second=0, microsecond=0)
     ConfusionSnapshot.objects.update_or_create(
@@ -34,7 +31,6 @@ def record_and_get_pulse(session):
             session.snapshots.values(
                 "timestamp",
                 "total_participants",
-                "avg_confusion",
                 "level_0_count",
                 "level_1_count",
                 "level_2_count",
