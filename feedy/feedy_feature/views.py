@@ -83,7 +83,6 @@ class SessionQuestionsView(APIView):
             try:
                 session = Session.objects.get(
                     id=session_id,
-                    teacher=request.user
                 )
             except Session.DoesNotExist:
                 return Response(
