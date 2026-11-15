@@ -4,7 +4,7 @@ import apiClient from './client'
 // Create a session. Body: {title}. Returns session_id, code, title, started_at, is_active.
 
 export async function createSession({ title }) {
-  const res = await apiClient('sessions/', {
+  return apiClient('sessions/', {
     method: 'POST',
     body: JSON.stringify({ title }),
   })
