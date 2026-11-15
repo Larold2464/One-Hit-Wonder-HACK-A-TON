@@ -121,6 +121,7 @@ class SessionQuestionsView(APIView):
     
             return Response({
                 "session_id": session.id,
+                "session_code": session.code,
                 "session_title": session.title,
                 "total_questions": len(question_data),
                 "questions": question_data
