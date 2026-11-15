@@ -1,12 +1,13 @@
 import React from "react";
 
-const FIVE_MINUTES = 5 * 60 * 1000;
+const TWO_MINUTES = 2 * 60 * 1000;
 
 export default function QuestionCard({ question, onToggleStatus }) {
   const isAnswered = question.status === "ANSWERED";
   // Re-checked on every render; the question list refetches every 3s
   const isRedAlert =
-    !isAnswered && Date.now() - new Date(question.created_at).getTime() > FIVE_MINUTES;
+    !isAnswered &&
+    Date.now() - new Date(question.created_at).getTime() > TWO_MINUTES;
 
   return (
     <div
@@ -26,7 +27,7 @@ export default function QuestionCard({ question, onToggleStatus }) {
             </h3>
             {isRedAlert && (
               <span className="badge badge-sm bg-base-100 text-error border-0 font-semibold">
-                Notice: &gt;5m Unanswered
+                Notice: &gt;2m Unanswered
               </span>
             )}
             {isAnswered && (
