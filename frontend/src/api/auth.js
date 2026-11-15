@@ -23,8 +23,7 @@ export async function createSession({ title }) {
 
 export async function getSessionTimeline({ sessionId }) {
   return apiClient(`/sessions/${sessionId}/timeline/`, {
-    method: 'POST',
-    body: JSON.stringify({ title }),
+    method: 'GET',
   })
 }
 
