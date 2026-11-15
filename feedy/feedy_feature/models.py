@@ -85,7 +85,7 @@ class ConfusionSnapshot(models.Model):
     )
     timestamp = models.DateTimeField(default=timezone.now)
     total_participants = models.PositiveIntegerField(default=0)
-
+    avg_confusion = models.FloatField(default=0.0)
     # 5 explicit fields for confusion levels 0 through 4
     level_0_count = models.PositiveIntegerField(default=0)  # I'm Good
     level_1_count = models.PositiveIntegerField(default=0)  # A Little Confused
@@ -98,6 +98,6 @@ class ConfusionSnapshot(models.Model):
         unique_together = ("session", "timestamp")
 
     def __str__(self):
-        return f"{self.session.code} @ {self.timestamp.strftime('%H:%M')} ({self.total_participants} students)"
+        return ( f"{self.session.code} @ " f"{self.timestamp.strftime('%H:%M')} " f"(avg confusion: {self.avg_confusion:.2f})")
 
 

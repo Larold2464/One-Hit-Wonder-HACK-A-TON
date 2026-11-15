@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Session, Participant, Question
-from .helpers import record_and_get_pulse
+from .helpers import save_snapshot, get_live_pulse
 from .permissions import IsSpeaker
 
 class CreateSessionView(APIView):
@@ -76,9 +76,43 @@ class JoinSessionView(APIView):
             status=status.HTTP_201_CREATED
         )
 
-class CreateQuestionView(APIView):
-    def post(self, request):
-        session_id = request.data.get("session_id")
+class SessionQuestionsView(APIView):
+
+    def get(self, request, session_id):
+            # Find the session owned by the logged-in teacher
+            try:
+                session = Session.objects.get(
+                    id=session_id,
+                    teacher=request.user
+                )
+            except Session.DoesNotExist:
+                return Response(
+                    {"error": "Session not found"},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+    
+            # Get all questions from this session
+            questions = session.questions.all().order_by("created_at")
+    
+            # Prepare question data
+            question_data = [
+                {
+                    "id": question.id,
+                    "text": question.text,
+                    "created_at": question.created_at,
+                    "participant_id": question.participant_id,
+                }
+                for question in questions
+            ]
+    
+            return Response({
+                "session_id": session.id,
+                "session_title": session.title,
+                "total_questions": len(question_data),
+                "questions": question_data
+            })
+    
+    def post(self, request, session_id):
         participant_token = request.data.get("participant_token")
         text = request.data.get("text", "").strip()
 
@@ -150,10 +184,45 @@ class SessionPulseView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        pulse_data = record_and_get_pulse(session)
+        pulse_data = get_live_pulse(session)
 
         return Response(pulse_data)
 
+class SaveSnapshotView(APIView):
+    permission_classes = [IsSpeaker]
+
+    def post(self, request, session_id):
+        try:
+            session = Session.objects.get(
+                id=session_id,
+                teacher=request.user,
+                ended_at__isnull=True
+            )
+        except Session.DoesNotExist:
+            return Response(
+                {"error": "Active session not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        snapshot = save_snapshot(session)
+
+        return Response(
+            {
+                "message": "Snapshot saved successfully",
+                "snapshot": {
+                    "id": snapshot.id,
+                    "timestamp": snapshot.timestamp,
+                    "total_participants": snapshot.total_participants,
+                    "avg_confusion": snapshot.avg_confusion,
+                    "level_0_count": snapshot.level_0_count,
+                    "level_1_count": snapshot.level_1_count,
+                    "level_2_count": snapshot.level_2_count,
+                    "level_3_count": snapshot.level_3_count,
+                    "level_4_count": snapshot.level_4_count,
+                }
+            },
+            status=status.HTTP_201_CREATED
+        )
 
 class ParticipantHeartbeatView(APIView):
     def post(self, request, token):
@@ -204,6 +273,7 @@ class SessionTimelineView(APIView):
             snapshots.values(
                 "timestamp",
                 "total_participants",
+                "avg_confusion",
                 "level_0_count",
                 "level_1_count",
                 "level_2_count",
@@ -283,3 +353,4 @@ class UpdateConfusionLevelView(APIView):
             },
             status=status.HTTP_200_OK
         )
+

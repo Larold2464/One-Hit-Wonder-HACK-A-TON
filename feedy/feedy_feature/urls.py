@@ -3,8 +3,9 @@ from django.urls import path
 from .views import (
     CreateSessionView,
     JoinSessionView,
-    CreateQuestionView,
+    SessionQuestionsView,
     SessionPulseView,
+    SaveSnapshotView,
     SessionTimelineView,
     ParticipantHeartbeatView,
     UpdateConfusionLevelView,
@@ -25,16 +26,25 @@ urlpatterns = [
         name="join-session"
     ),
 
+    # Student + Teacher: Ask a question and Get questions for a session
     path(
-        "questions/",
-        CreateQuestionView.as_view(),
-        name="create-question"
-        ),
+        "sessions/<int:session_id>/questions/",
+        SessionQuestionsView.as_view(),
+        name="session-questions"
+    ),
+
     # Teacher: Get live confusion statistics
     path(
         "sessions/<int:session_id>/pulse/",
         SessionPulseView.as_view(),
         name="session-pulse"
+    ),
+
+    # Teacher: Save a confusion snapshot
+    path(
+        "sessions/<int:session_id>/snapshot/",
+        SaveSnapshotView.as_view(),
+        name="save-snapshot"
     ),
 
     # Teacher: Get historical confusion snapshots
@@ -57,4 +67,5 @@ urlpatterns = [
         UpdateConfusionLevelView.as_view(),
         name="update-confusion-level"
     ),
+
 ]
