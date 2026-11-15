@@ -7,10 +7,10 @@ export async function loginUser({ username, password }) {
   })
 }
 
-export async function registerUser({ username, email, password }) {
+export async function registerUser({ username, email, password, role }) {
   return apiClient('/auth/register/', {
     method: 'POST',
-    body: JSON.stringify({ username, email, password }),
+    body: JSON.stringify({ username, email, password, role }),
   })
 }
 
