@@ -50,7 +50,7 @@ This project is not deployed, so you will need to use Cloudflare Tunnel
 - make an frontend/.env file with VITE_API_URL=/api inside.
 - Run the django develpment server (python manage.py runserver)
 - Run the frontend development server (npm run dev)
-- run the command anywhere: cloudflared tunnel --url http://localhost:5173 (this will give you a link)
+- run the command anywhere: cloudflared tunnel --url http://localhost:5173 (this will give you a link for Feedy)
 
 ### 1. Instructor creates a session
 
