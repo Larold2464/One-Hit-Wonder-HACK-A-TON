@@ -7,32 +7,11 @@ import {
   getRefreshToken,
   setRefreshToken,
   clearStoredTokens,
+  readHostSession,
+  writeHostSession
 } from '../api/tokenStorage'
 
 export const AuthContext = createContext(null)
-
-// The session the logged-in teacher is currently hosting.
-// The create-session response is the only place the room code comes from,
-// so it is saved here (and in localStorage) for the teacher and end screens.
-const HOST_SESSION_KEY = 'feedy_host_session'
-
-function readHostSession() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(HOST_SESSION_KEY))
-    return saved?.session_id ? saved : null
-  } catch {
-    return null
-  }
-}
-
-function writeHostSession(value) {
-  try {
-    if (value) localStorage.setItem(HOST_SESSION_KEY, JSON.stringify(value))
-    else localStorage.removeItem(HOST_SESSION_KEY)
-  } catch {
-    // storage unavailable: still works until refresh
-  }
-}
 
 export function AuthProvider({ children }) {
   // Lazy initial state: read localStorage once on mount, so a page reload
