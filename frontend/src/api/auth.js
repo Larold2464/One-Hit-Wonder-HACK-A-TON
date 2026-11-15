@@ -21,6 +21,13 @@ export async function createSession({ title }) {
   })
 }
 
+export async function getSessionTimeline({ sessionId }) {
+  return apiClient(`/sessions/${sessionId}/timeline/`, {
+    method: 'POST',
+    body: JSON.stringify({ title }),
+  })
+}
+
 export async function refreshToken({ refresh }) {
   return apiClient('/auth/token/refresh/', {
     method: 'POST',
