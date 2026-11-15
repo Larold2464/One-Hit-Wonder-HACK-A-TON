@@ -22,6 +22,7 @@ export function ParticipantProvider({ children }) {
       participant_token: data.participant_token,
       session_id: data.session_id,
       session_title: data.session_title,
+      code: data.code, 
     }
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(value))

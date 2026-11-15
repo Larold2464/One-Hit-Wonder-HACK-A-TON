@@ -84,6 +84,7 @@ class JoinSessionView(APIView):
                 "participant_token": str(participant.token),
                 "session_id": session.id,
                 "session_title": session.title,
+                "code": session.code,
                 "confusion_level": participant.confusion_level
             },
             status=status.HTTP_201_CREATED
