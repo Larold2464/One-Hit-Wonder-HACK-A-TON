@@ -1,7 +1,7 @@
 import { getAccessToken } from './tokenStorage'
 
 // Fall back to the local Django dev server if the env variable is not set.
-const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000/api/'
+const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000/api'
 
 // These are set once by AuthProvider after it mounts.
 // The client itself has no React dependency — it just calls these callbacks
