@@ -44,7 +44,7 @@ export function useSaveSnapshot(session_id, active = true) {
   // save a graph point once a minute, only while the session is active
   useEffect(() => {
     if (!session_id || !active) return
-    const timer = setInterval(() => mutate(), 60000)
+    const timer = setInterval(() => mutate(), 30000)
     return () => clearInterval(timer)
   }, [session_id, active, mutate])
 }
