@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router";
 
-export default function ConfusionMeterBar({ confusionLevel }) {
+export default function ConfusionMeterBar({ confusionLevel, onEnd, isEnding }) {
   const pct = Math.min(100, Math.max(0, (confusionLevel / 5) * 100));
 
   return (
@@ -23,9 +23,9 @@ export default function ConfusionMeterBar({ confusionLevel }) {
         </div>
       </div>
 
-      <Link to="/end" className="btn btn-primary px-8">
-        End Session
-      </Link>
+      <button className="btn btn-primary px-8" onClick={onEnd} disabled={isEnding}>
+        {isEnding ? "Ending..." : "End Session"}
+      </button>
     </div>
   );
 }
