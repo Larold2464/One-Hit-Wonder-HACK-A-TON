@@ -17,11 +17,12 @@ export default function TeacherScreen() {
   const { isAuthenticated, hostSession } = useAuth();
   const navigate = useNavigate();
   const sessionId = hostSession?.session_id;
-  const { data: pulse } = usePulse(sessionId);
-  const { data: questionData } = useQuestions(sessionId);
-  const updateQuestion = useUpdateQuestion(sessionId);
   const endSession = useEndSession();
-  useSaveSnapshot(sessionId, !endSession.isSuccess);
+  const sessionActive = !endSession.isSuccess;
+  const { data: pulse } = usePulse(sessionId, sessionActive);
+  const { data: questionData } = useQuestions(sessionId, sessionActive);
+  const updateQuestion = useUpdateQuestion(sessionId);
+  useSaveSnapshot(sessionId, sessionActive);
   
   
 
