@@ -60,6 +60,7 @@ export function AuthProvider({ children }) {
     return () => window.removeEventListener('storage', onStorage)
   }, [])
 
+  // what useMemo does is just make sure it doesn't get recalcuated everytime it is ran
   const value = useMemo(
     () => ({ token, isAuthenticated: Boolean(token), login, logout }),
     [token, login, logout],
