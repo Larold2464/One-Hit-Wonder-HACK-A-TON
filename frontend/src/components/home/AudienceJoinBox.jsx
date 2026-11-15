@@ -5,7 +5,10 @@ import { useJoinSession } from "../../hooks/useStudent";
 // Student entry point. useJoinSession saves the response into ParticipantContext,
 // so all we do here is navigate once it succeeds.
 export default function AudienceJoinBox() {
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState(() => {
+    const urlCode = new URLSearchParams(window.location.search).get("code");
+    return urlCode?.toUpperCase() ?? "";
+  });
   const navigate = useNavigate();
   const join = useJoinSession();
 
