@@ -76,9 +76,43 @@ class JoinSessionView(APIView):
             status=status.HTTP_201_CREATED
         )
 
-class CreateQuestionView(APIView):
-    def post(self, request):
-        session_id = request.data.get("session_id")
+class SessionQuestionsView(APIView):
+
+    def get(self, request, session_id):
+            # Find the session owned by the logged-in teacher
+            try:
+                session = Session.objects.get(
+                    id=session_id,
+                    teacher=request.user
+                )
+            except Session.DoesNotExist:
+                return Response(
+                    {"error": "Session not found"},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+    
+            # Get all questions from this session
+            questions = session.questions.all().order_by("created_at")
+    
+            # Prepare question data
+            question_data = [
+                {
+                    "id": question.id,
+                    "text": question.text,
+                    "created_at": question.created_at,
+                    "participant_id": question.participant_id,
+                }
+                for question in questions
+            ]
+    
+            return Response({
+                "session_id": session.id,
+                "session_title": session.title,
+                "total_questions": len(question_data),
+                "questions": question_data
+            })
+    
+    def post(self, request, session_id):
         participant_token = request.data.get("participant_token")
         text = request.data.get("text", "").strip()
 
@@ -319,3 +353,4 @@ class UpdateConfusionLevelView(APIView):
             },
             status=status.HTTP_200_OK
         )
+
