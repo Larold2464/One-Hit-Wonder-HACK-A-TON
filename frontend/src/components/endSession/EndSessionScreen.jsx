@@ -16,8 +16,8 @@ export default function EndSessionScreen() {
   const sessionId = hostSession?.session_id;
 
   const { data: timelineData, isLoading } = useTimeline(sessionId);
-  const { data: questionData } = useQuestions(sessionId);
-  const { data: pulse } = usePulse(sessionId);
+  const { data: questionData } = useQuestions(sessionId, false);
+  const { data: pulse } = usePulse(sessionId, false);
 
   if (!isAuthenticated || !hostSession) return <Navigate to="/" replace />;
 
@@ -29,13 +29,17 @@ export default function EndSessionScreen() {
       minute: "2-digit",
     }),
     // null leaves a gap for minutes when nobody was active
-    value: point.total_participants ? displayAverage(point.avg_confusion, 1) : null,
+    value: point.total_participants
+      ? displayAverage(point.avg_confusion, 1)
+      : null,
   }));
 
   const activePoints = timeline.filter((p) => p.total_participants);
   const sessionAvg = activePoints.length
-    ? activePoints.reduce((sum, p) => sum + displayAverage(p.avg_confusion, 1), 0) /
-      activePoints.length
+    ? activePoints.reduce(
+        (sum, p) => sum + displayAverage(p.avg_confusion, 1),
+        0,
+      ) / activePoints.length
     : 0;
 
   // Peak attendance across the session (the live count drops as students leave)
@@ -48,15 +52,18 @@ export default function EndSessionScreen() {
     <div className="h-screen w-full overflow-hidden flex flex-col bg-base-100 p-6 gap-6">
       <div className="flex items-center justify-between border-b border-base-300 pb-3">
         <div>
-          <h1 className="text-2xl font-bold">End Session · {hostSession.title}</h1>
+          <h1 className="text-2xl font-bold">
+            End Session · {hostSession.title}
+          </h1>
           <p className="text-xs opacity-75">Room: #{hostSession.code}</p>
         </div>
         <div className="flex gap-2">
-          <Link to="/teacher" className="btn btn-sm btn-outline">
-            Back to Session
-          </Link>
           {/* Finish forgets this session so the home page offers a fresh start */}
-          <Link to="/" onClick={clearHostSession} className="btn btn-sm btn-primary">
+          <Link
+            to="/"
+            onClick={clearHostSession}
+            className="btn btn-sm btn-primary"
+          >
             Finish
           </Link>
         </div>

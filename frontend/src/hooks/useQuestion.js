@@ -2,12 +2,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getQuestions, createQuestion, updateQuestion } from '../api/question'
 
-export function useQuestions(session_id) {
+export function useQuestions(session_id, active = true) {
   return useQuery({
     queryKey: ['questions', session_id],
     queryFn: () => getQuestions(session_id),
-    enabled: !!session_id,
-    refetchInterval: 3000,
+    enabled: !!session_id && active,
+    refetchInterval: active ? 3000 : false,
   })
 }
 

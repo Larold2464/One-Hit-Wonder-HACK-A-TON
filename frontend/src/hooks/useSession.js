@@ -14,12 +14,12 @@ export function useCreateSession() {
   })
 }
 
-export function usePulse(session_id) {
+export function usePulse(session_id, active = true) {
   return useQuery({
     queryKey: ['pulse', session_id],
     queryFn: () => fetchPulse(session_id),
-    enabled: !!session_id,
-    refetchInterval: 3000,
+    enabled: !!session_id && active,
+    refetchInterval: active ? 3000 : false,
   })
 }
 
