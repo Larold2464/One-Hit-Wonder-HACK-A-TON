@@ -179,6 +179,7 @@ class SaveSnapshotView(APIView):
                     "id": snapshot.id,
                     "timestamp": snapshot.timestamp,
                     "total_participants": snapshot.total_participants,
+                    "avg_confusion": snapshot.avg_confusion,
                     "level_0_count": snapshot.level_0_count,
                     "level_1_count": snapshot.level_1_count,
                     "level_2_count": snapshot.level_2_count,
@@ -238,6 +239,7 @@ class SessionTimelineView(APIView):
             snapshots.values(
                 "timestamp",
                 "total_participants",
+                "avg_confusion",
                 "level_0_count",
                 "level_1_count",
                 "level_2_count",

@@ -14,6 +14,7 @@ def get_live_pulse(session):
 
     stats = active.aggregate(
         total_participants=Count("id"),
+        avg_confusion=Avg("confusion_level"),
         level_0_count=Count("id", filter=Q(confusion_level=0)),
         level_1_count=Count("id", filter=Q(confusion_level=1)),
         level_2_count=Count("id", filter=Q(confusion_level=2)),
@@ -21,6 +22,8 @@ def get_live_pulse(session):
         level_4_count=Count("id", filter=Q(confusion_level=4)),
     )
 
+    stats["avg_confusion"] = round(stats["avg_confusion"] or 0.0, 2)
+    
     return stats
 
 def save_snapshot(session):
