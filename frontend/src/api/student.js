@@ -8,7 +8,6 @@ export async function joinSession({ code }) {
     body: JSON.stringify({ code: code.trim().toUpperCase() }),
   })
 
-  
   const data = await res.json()
   // saves student token so they stay the same student after a refresh
   if (res.ok) {
@@ -24,7 +23,7 @@ export function getParticipantToken(sessionId) {
 
 // update last_seen so the student counts as active. Call every 5-10 seconds.
 export async function sendHeartbeat(token) {
-  return apiClient(`participants/${token}/heartbeat`, {
+  return apiClient(`participants/${token}/heartbeat/`, {
     method: 'POST',
   })
 }
