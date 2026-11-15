@@ -131,6 +131,8 @@ class SessionQuestionsView(APIView):
                 {"error": "Question cannot exceed 300 characters"},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        if len(title) > 100:
+            return Response({"error": "Title cannot exceed 100 characters"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Find the session
         try:
