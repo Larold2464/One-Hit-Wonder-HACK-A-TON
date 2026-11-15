@@ -11,7 +11,7 @@ export async function createQuestion({session_id, participant_token, text}){
 }
 
 export async function getQuestions(session_id) {
-  const res = await apiClient(`sessions/${session_id}/questions/`)
+  const res = await apiClient(`/sessions/${session_id}/questions/`)
   const data = await res.json()
   if (!res.ok) throw new Error(data.error)
   return data
