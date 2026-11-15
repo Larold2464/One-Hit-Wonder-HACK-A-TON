@@ -31,20 +31,27 @@ export function usePulse(session_id) {
 
 export function useSaveSnapshot(session_id) {
   const queryClient = useQueryClient()
-  return useQuery({
-    queryKey: ['snapshot', session_id],
-    queryFn: async () => {
+
+  const { mutate } = useMutation({
+    mutationFn: async () => {
       const res = await saveSnapshot(session_id)
       const data = await res.json()
 
       if (!res.ok) throw new Error(data.error)
-      queryClient.invalidateQueries({ queryKey: ['timeline', session_id] })
       return data
     },
 
-    enabled: !!session_id,
-    refetchInterval: 60000, // saves a graph point every minute for the instructor
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['timeline', session_id] })
+    },
   })
+
+  // save a graph point once a minute and only on this timer
+  useEffect(() => {
+    if (!session_id) return
+    const timer = setInterval(() => mutate(), 60000)
+    return () => clearInterval(timer)
+  }, [session_id, mutate])
 }
 
 export function useTimeline(session_id) {
