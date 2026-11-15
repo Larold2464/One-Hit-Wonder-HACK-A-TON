@@ -1,4 +1,4 @@
-
+import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ParticipantProvider } from "./context/ParticipantContext";
@@ -20,6 +20,7 @@ export default function App() {
               <Route path="/teacher" element={<TeacherScreen />} />
               <Route path="/student" element={<StudentScreen />} />
               <Route path="/end" element={<EndSessionScreen />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>
         </BrowserRouter>
