@@ -1,4 +1,7 @@
 import React from 'react';
+import { useParticipant } from '../../context/ParticipantContext';
+import { useSetConfusion } from '../../hooks/useStudent';
+import { toApiLevel, toDisplayLevel } from '../../utils/confusion';
 
 const LEVELS = [
   { value: 1, label: '1', desc: 'Following well', colorClass: 'bg-success text-success-content' },
@@ -8,7 +11,33 @@ const LEVELS = [
   { value: 5, label: '5', desc: 'Very lost', colorClass: 'bg-error text-error-content' },
 ];
 
-export default function ConfusionLevelSelector({ selectedLevel }) {
+// Errors that mean this student can't continue: clear the context so the
+// student screen redirects back to the join box.
+const FATAL_ERRORS = ['This session has ended', 'Participant not found'];
+
+export default function ConfusionLevelSelector() {
+  const { participant, updateConfusionLevel, clearParticipant } = useParticipant();
+  const setConfusion = useSetConfusion();
+
+  // This student's own level (not the class average), shown on the 1-5 scale
+  const selectedLevel = toDisplayLevel(participant.confusion_level ?? 0);
+
+  const choose = (displayLevel) => {
+    const previous = participant.confusion_level;
+    const apiLevel = toApiLevel(displayLevel);
+    updateConfusionLevel(apiLevel); // update the UI right away
+
+    setConfusion.mutate(
+      { participant_token: participant.participant_token, confusion_level: apiLevel },
+      {
+        onError: (err) => {
+          if (FATAL_ERRORS.includes(err.message)) clearParticipant();
+          else updateConfusionLevel(previous); // undo on a normal failure
+        },
+      },
+    );
+  };
+
   return (
     <div className="space-y-3">
       <div className="card bg-base-100 border-2 border-base-300 py-2.5 px-4 text-center">
@@ -23,7 +52,11 @@ export default function ConfusionLevelSelector({ selectedLevel }) {
           <button
             key={lvl.value}
             type="button"
-            className={`join-item flex-1 py-3 px-2 flex flex-col items-center justify-center border-r border-base-300 last:border-r-0 ${lvl.colorClass}`}
+            onClick={() => choose(lvl.value)}
+            aria-pressed={selectedLevel === lvl.value}
+            className={`join-item flex-1 py-3 px-2 flex flex-col items-center justify-center border-r border-base-300 last:border-r-0 ${lvl.colorClass} ${
+              selectedLevel === lvl.value ? 'ring-4 ring-inset ring-base-content/60 font-bold' : 'opacity-70'
+            }`}
           >
             <span className="text-base font-bold leading-none">{lvl.label}</span>
             <span className="text-[10px] hidden sm:inline mt-1">{lvl.desc}</span>

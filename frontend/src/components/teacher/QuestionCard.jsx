@@ -1,8 +1,12 @@
 import React from "react";
 
-export default function QuestionCard({ question }) {
-  const isRedAlert = false;
+const FIVE_MINUTES = 5 * 60 * 1000;
+
+export default function QuestionCard({ question, onToggleStatus }) {
   const isAnswered = question.status === "ANSWERED";
+  // Re-checked on every render; the question list refetches every 3s
+  const isRedAlert =
+    !isAnswered && Date.now() - new Date(question.created_at).getTime() > FIVE_MINUTES;
 
   return (
     <div
@@ -43,6 +47,7 @@ export default function QuestionCard({ question }) {
         <div className="card-actions justify-end items-center mt-2 pt-1 border-t border-current/10">
           <button
             type="button"
+            onClick={() => onToggleStatus?.(question)}
             className={`btn btn-xs ${
               isRedAlert
                 ? "bg-base-100 text-error hover:bg-base-200 border-0"

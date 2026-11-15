@@ -9,7 +9,8 @@ export function useJoinSession() {
   const { saveParticipant } = useParticipant()
   return useMutation({
     mutationFn: joinSession,
-    onSuccess: (data) => saveParticipant(data),
+    // the join response has no room code, so keep the one the student typed
+    onSuccess: (data, variables) => saveParticipant({ ...data, code: variables.code }),
   })
 }
 
