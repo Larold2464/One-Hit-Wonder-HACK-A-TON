@@ -98,6 +98,6 @@ class ConfusionSnapshot(models.Model):
         unique_together = ("session", "timestamp")
 
     def __str__(self):
-        return f"{self.session.code} @ {self.timestamp.strftime('%H:%M')} (avg: {self.avg_confusion:.2f})"
+        return f"{self.session.code} @ {self.timestamp.strftime('%H:%M')}"
 
 

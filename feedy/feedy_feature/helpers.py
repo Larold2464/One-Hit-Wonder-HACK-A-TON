@@ -4,10 +4,13 @@ from django.db.models import Count, Avg, Q
 
 from .models import  ConfusionSnapshot
 
-def record_and_get_pulse(session):
+def get_live_pulse(session):
     now = timezone.now()
     cutoff = now - timedelta(minutes=2)
-    active = session.participants.filter(last_seen__gte=cutoff)
+
+    active = session.participants.filter(
+        last_seen__gte=cutoff
+    )
 
     stats = active.aggregate(
         total_participants=Count("id"),
@@ -18,24 +21,12 @@ def record_and_get_pulse(session):
         level_4_count=Count("id", filter=Q(confusion_level=4)),
     )
 
-    minute_bucket = now.replace(second=0, microsecond=0)
-    ConfusionSnapshot.objects.update_or_create(
-        session=session,
-        timestamp=minute_bucket,
-        defaults=stats,
-    )
+    return stats
 
-    return {
-        "live": stats,
-        "timeline": list(
-            session.snapshots.values(
-                "timestamp",
-                "total_participants",
-                "level_0_count",
-                "level_1_count",
-                "level_2_count",
-                "level_3_count",
-                "level_4_count",
-            )
-        ),
-    }
+def save_snapshot(session):
+    stats = get_live_pulse(session)
+
+    return ConfusionSnapshot.objects.create(
+        session=session,
+        **stats
+    )

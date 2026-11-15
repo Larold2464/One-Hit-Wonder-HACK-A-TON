@@ -5,6 +5,7 @@ from .views import (
     JoinSessionView,
     CreateQuestionView,
     SessionPulseView,
+    SaveSnapshotView,
     SessionTimelineView,
     ParticipantHeartbeatView,
     UpdateConfusionLevelView,
@@ -30,11 +31,19 @@ urlpatterns = [
         CreateQuestionView.as_view(),
         name="create-question"
         ),
+
     # Teacher: Get live confusion statistics
     path(
         "sessions/<int:session_id>/pulse/",
         SessionPulseView.as_view(),
         name="session-pulse"
+    ),
+
+    # Teacher: Save a confusion snapshot
+    path(
+        "sessions/<int:session_id>/snapshot/",
+        SaveSnapshotView.as_view(),
+        name="save-snapshot"
     ),
 
     # Teacher: Get historical confusion snapshots
