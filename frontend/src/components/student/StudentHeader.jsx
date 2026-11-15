@@ -9,7 +9,7 @@ export default function StudentHeader({ roomNumber }) {
       </Link>
 
       <div className="badge badge-outline badge-lg py-4 px-4 font-mono text-xs sm:text-sm">
-        Connected To: <strong className="ml-1 underline">#{roomNumber}</strong>
+        Room: <strong className="ml-1 underline">#{roomNumber}</strong>
       </div>
     </div>
   );
