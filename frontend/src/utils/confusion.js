@@ -1,8 +1,6 @@
 // The backend stores confusion as 0-4. The UI shows it as 1-5.
-// Keep every conversion in this one file so the two scales never get mixed up.
-
-export const toDisplayLevel = (apiLevel) => apiLevel
-export const toApiLevel = (displayLevel) => displayLevel
+export const toDisplayLevel = (apiLevel) => apiLevel + 1
+export const toApiLevel = (displayLevel) => displayLevel - 1
 
 // Class average for the meter / chart. With nobody active the backend returns 0,
 // which would wrongly read as "1 - Following well", so show 0 instead.

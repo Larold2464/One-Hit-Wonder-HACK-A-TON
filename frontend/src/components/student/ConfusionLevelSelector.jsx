@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParticipant } from '../../context/ParticipantContext';
 import { useSetConfusion } from '../../hooks/useStudent';
-import { toApiLevel, toDisplayLevel } from '../../utils/confusion';
+import { useState } from 'react';
 
 const LEVELS = [
   { value: 1, label: '1', desc: 'Following well', colorClass: 'bg-success text-success-content' },
@@ -16,23 +16,22 @@ const LEVELS = [
 const FATAL_ERRORS = ['This session has ended', 'Participant not found'];
 
 export default function ConfusionLevelSelector() {
-  const { participant, updateConfusionLevel, clearParticipant } = useParticipant();
-  const setConfusion = useSetConfusion();
+  const { participant, clearParticipant } = useParticipant();
+  const setConfusion = useSetConfusion(0);
 
   // This student's own level (not the class average), shown on the 1-5 scale
-  const selectedLevel = toDisplayLevel(participant.confusion_level ?? 0);
+  const [selectedLevel, useSelectedLevel] = useState(1);
 
   const choose = (displayLevel) => {
     const previous = participant.confusion_level;
-    const apiLevel = toApiLevel(displayLevel);
-    updateConfusionLevel(apiLevel); // update the UI right away
+    const apiLevel = displayLevel;
+    useSelectedLevel(apiLevel)
 
     setConfusion.mutate(
-      { participant_token: participant.participant_token, confusion_level: apiLevel },
+      { participant_token: participant.participant_token, confusion_level: apiLevel - 1 },
       {
         onError: (err) => {
           if (FATAL_ERRORS.includes(err.message)) clearParticipant();
-          else updateConfusionLevel(previous); // undo on a normal failure
         },
       },
     );
