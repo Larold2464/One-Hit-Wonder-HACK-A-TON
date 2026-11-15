@@ -16,3 +16,13 @@ export async function getQuestions(session_id) {
   if (!res.ok) throw new Error(data.error)
   return data
 }
+
+export async function updateQuestion({question_id, status}) {
+  const res = await apiClient(`/questions/${question_id}/status/`, {
+    method : 'PATCH',
+    body : JSON.stringify({status})
+  })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.error)
+  return data
+}
