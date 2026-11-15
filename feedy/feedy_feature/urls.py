@@ -4,6 +4,7 @@ from .views import (
     CreateSessionView,
     JoinSessionView,
     SessionQuestionsView,
+    UpdateQuestionStatusView,
     SessionPulseView,
     SaveSnapshotView,
     SessionTimelineView,
@@ -31,6 +32,13 @@ urlpatterns = [
         "sessions/<int:session_id>/questions/",
         SessionQuestionsView.as_view(),
         name="session-questions"
+    ),
+
+    # Teacher: Update question status
+    path(
+        "questions/<int:question_id>/status/",
+        UpdateQuestionStatusView.as_view(),
+        name="update-question-status"
     ),
 
     # Teacher: Get live confusion statistics

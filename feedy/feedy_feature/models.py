@@ -58,6 +58,10 @@ class Participant(models.Model):
 
 
 class Question(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "PENDING", "Not Answered"
+        ANSWERED = "ANSWERED", "Answered"
+
     session = models.ForeignKey(
         Session,
         on_delete=models.CASCADE,
@@ -68,8 +72,14 @@ class Question(models.Model):
         on_delete=models.CASCADE,
         related_name="questions",
     )  
+    status = models.CharField(
+        max_length=10,
+        choices=Status.choices,
+        default=Status.PENDING,
+    )
     text = models.TextField(max_length=300)
     created_at = models.DateTimeField(auto_now_add=True)
+
 
     class Meta:
         ordering = ["created_at"] # sort questions by creation time
