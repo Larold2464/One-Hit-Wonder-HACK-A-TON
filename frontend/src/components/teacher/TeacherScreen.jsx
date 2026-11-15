@@ -29,7 +29,7 @@ export default function TeacherScreen() {
   // All hooks run before this, so the redirect never breaks the rules of hooks
   if (!isAuthenticated || !hostSession) return <Navigate to="/" replace />;
 
-  const questions = questionData?.questions ?? [];
+  const questions = [...(questionData?.questions ?? [])].reverse(); // new first & better UI experience
   const participants = pulse?.total_participants ?? 0;
 
   const toggleStatus = (question) =>
