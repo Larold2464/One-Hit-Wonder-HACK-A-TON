@@ -1,4 +1,5 @@
-import { useQuery, useMutation, useQueryClient, useEffect } from '@tanstack/react-query'
+import { useEffect } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createSession, fetchPulse, saveSnapshot, getSessionTimeline } from '../api/session'
 
 export function useCreateSession() {
