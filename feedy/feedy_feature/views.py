@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-
+from django.utils import timezone
 from .models import Session, Participant, Question
 from .helpers import save_snapshot, get_live_pulse
 from .permissions import IsSpeaker
@@ -36,6 +36,19 @@ class CreateSessionView(APIView):
             },
             status=status.HTTP_201_CREATED
         )
+
+class EndSessionView(APIView):
+    permission_classes = [IsSpeaker]
+
+    def post(self, request, session_id):
+        try:
+            session = Session.objects.get(id=session_id, teacher=request.user)
+        except Session.DoesNotExist:
+            return Response({"error": "Session not found"}, status=status.HTTP_404_NOT_FOUND)
+        if session.ended_at is None:
+            session.ended_at = timezone.now()
+            session.save(update_fields=["ended_at"])
+        return Response({"message": "Session ended", "ended_at": session.ended_at})
 
 class JoinSessionView(APIView):
     def post(self, request):
@@ -131,6 +144,8 @@ class SessionQuestionsView(APIView):
                 {"error": "Question cannot exceed 300 characters"},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        if len(title) > 100:
+            return Response({"error": "Title cannot exceed 100 characters"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Find the session
         try:

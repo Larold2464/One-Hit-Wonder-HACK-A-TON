@@ -1,71 +1,56 @@
 import { useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { createSession, fetchPulse, saveSnapshot, getSessionTimeline } from '../api/session'
+import {
+  createSession,
+  fetchPulse,
+  saveSnapshot,
+  getSessionTimeline,
+  endSession,
+} from '../api/session'
 
 export function useCreateSession() {
   return useMutation({
-    mutationFn: async ({ title }) => {
-      const res = await createSession({ title })
-      const data = await res.json()
-
-      if (!res.ok) throw new Error(data.error)
-      return data
-    },
+    mutationFn: createSession,
   })
 }
 
 export function usePulse(session_id) {
   return useQuery({
     queryKey: ['pulse', session_id],
-    queryFn: async () => {
-      const res = await fetchPulse(session_id)
-      const data = await res.json()
-
-      if (!res.ok) throw new Error(data.error)
-      return data
-    },
-
+    queryFn: () => fetchPulse(session_id),
     enabled: !!session_id,
     refetchInterval: 3000,
   })
 }
 
-export function useSaveSnapshot(session_id) {
+export function useTimeline(session_id) {
+  return useQuery({
+    queryKey: ['timeline', session_id],
+    queryFn: () => getSessionTimeline(session_id),
+    enabled: !!session_id,
+  })
+}
+
+export function useSaveSnapshot(session_id, active = true) {
   const queryClient = useQueryClient()
 
   const { mutate } = useMutation({
-    mutationFn: async () => {
-      const res = await saveSnapshot(session_id)
-      const data = await res.json()
-
-      if (!res.ok) throw new Error(data.error)
-      return data
-    },
-
+    mutationFn: () => saveSnapshot(session_id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['timeline', session_id] })
     },
   })
 
-  // save a graph point once a minute and only on this timer
+  // save a graph point once a minute, only while the session is active
   useEffect(() => {
-    if (!session_id) return
+    if (!session_id || !active) return
     const timer = setInterval(() => mutate(), 60000)
     return () => clearInterval(timer)
-  }, [session_id, mutate])
+  }, [session_id, active, mutate])
 }
 
-export function useTimeline(session_id) {
-  return useQuery({
-    queryKey: ['timeline', session_id],
-    queryFn: async () => {
-      const res = await getSessionTimeline(session_id)
-      const data = await res.json()
-
-      if (!res.ok) throw new Error(data.error)
-      return data
-    },
-
-    enabled: !!session_id,
+export function useEndSession() {
+  return useMutation({
+    mutationFn: endSession,
   })
 }

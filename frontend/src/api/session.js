@@ -1,35 +1,43 @@
 import apiClient from './client'
 
-// instructor --> start a class session
-// Create a session. Body: {title}. Returns session_id, code, title, started_at, is_active.
-
 export async function createSession({ title }) {
-  return apiClient('/sessions/', {
+  const res = await apiClient('/sessions/', {
     method: 'POST',
     body: JSON.stringify({ title }),
   })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.error || data.detail)
+  return data
 }
 
-// instructor --> live confusion + graph data
-// Get live confusion stats (active count, average, count per level). Also saves this minute's snapshot.
-// used a plain value for the read functions
-
-export async function fetchPulse(sessionId) {
-  return apiClient(`/sessions/${sessionId}/pulse/`)
+export async function fetchPulse(session_id) {
+  const res = await apiClient(`/sessions/${session_id}/pulse/`)
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.error || data.detail)
+  return data
 }
 
-// save a confusion snapshot 
-export async function saveSnapshot(sessionId) {
-  return apiClient(`/sessions/${sessionId}/snapshot/`, {
+export async function saveSnapshot(session_id) {
+  const res = await apiClient(`/sessions/${session_id}/snapshot/`, {
     method: 'POST',
-  }) 
+  })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.error || data.detail)
+  return data
 }
 
-// instructor --> graph data for end of session
-// Get all saved snapshots for the session, for the end-of-session chart.
+export async function getSessionTimeline(session_id) {
+  const res = await apiClient(`/sessions/${session_id}/timeline/`)
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.error || data.detail)
+  return data
+}
 
-export async function getSessionTimeline(sessionId) {
-  return apiClient(`/sessions/${sessionId}/timeline/`, {
-    method: 'GET',
+export async function endSession(session_id) {
+  const res = await apiClient(`/sessions/${session_id}/end/`, {
+    method: 'POST',
   })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.error || data.detail)
+  return data
 }
