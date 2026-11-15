@@ -10,6 +10,7 @@ from .views import (
     SessionTimelineView,
     ParticipantHeartbeatView,
     UpdateConfusionLevelView,
+    EndSessionView,
 )
 
 urlpatterns = [
@@ -74,6 +75,11 @@ urlpatterns = [
         "participants/confusion/",
         UpdateConfusionLevelView.as_view(),
         name="update-confusion-level"
+    ),
+    # Teacher ends session
+    path("sessions/<int:session_id>/end/", 
+        EndSessionView.as_view(), 
+        name="end-session"
     ),
 
 ]
