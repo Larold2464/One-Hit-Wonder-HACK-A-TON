@@ -14,19 +14,6 @@ export async function registerUser({ username, email, password, role }) {
   })
 }
 
-export async function createSession({ title }) {
-  return apiClient('/sessions/', {
-    method: 'POST',
-    body: JSON.stringify({ title }),
-  })
-}
-
-export async function getSessionTimeline({ sessionId }) {
-  return apiClient(`/sessions/${sessionId}/timeline/`, {
-    method: 'GET',
-  })
-}
-
 export async function refreshToken({ refresh }) {
   return apiClient('/auth/token/refresh/', {
     method: 'POST',
