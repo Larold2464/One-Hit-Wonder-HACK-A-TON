@@ -33,7 +33,12 @@ Feedy addresses this problem by giving students a simple way to submit questions
 
 ## How It Works
 ## when testing
-please use the pre-resgitered user
+
+Run basic django setup (cretate environment, install dependencies from requirements.txt file and run migrations)
+
+for the front end, run npm i to install dependencies.
+
+Create a django superuser or use:
 
 username : testInstructor
 password: passtest12345
@@ -41,11 +46,11 @@ password: passtest12345
 use these credentials to sign in as Speaker/Instructor
 
 This project is not deployed, so you will need to use Cloudflare Tunnel
-- Install: winget install Cloudflare.cloudflared
+- run command anywhere: winget install Cloudflare.cloudflared
 - make an frontend/.env file with VITE_API_URL=/api inside.
-- Run the django develpment server
-- Run the frontend development server
-- run the command: cloudflared tunnel --url http://localhost:5173 (this will give you a link)
+- Run the django develpment server (python manage.py runserver)
+- Run the frontend development server (npm run dev)
+- run the command anywhere: cloudflared tunnel --url http://localhost:5173 (this will give you a link)
 
 ### 1. Instructor creates a session
 
