@@ -99,6 +99,7 @@ class SessionQuestionsView(APIView):
                 {
                     "id": question.id,
                     "text": question.text,
+                    "status": question.status,
                     "created_at": question.created_at,
                     "participant_id": question.participant_id,
                 }
@@ -173,7 +174,42 @@ class SessionQuestionsView(APIView):
             status=status.HTTP_201_CREATED
         )
 
+class UpdateQuestionStatusView(APIView):
+    permission_classes = [IsSpeaker]
 
+    def patch(self, request, question_id):
+        status_value = request.data.get("status")
+
+        if status_value not in Question.Status.values:
+            return Response(
+                {"error": "Invalid status. Use PENDING or ANSWERED."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            question = Question.objects.get(
+                id=question_id,
+                session__teacher=request.user
+            )
+        except Question.DoesNotExist:
+            return Response(
+                {"error": "Question not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        question.status = status_value
+        question.save(update_fields=["status"])
+
+        return Response({
+            "message": "Question status updated successfully",
+            "question": {
+                "id": question.id,
+                "text": question.text,
+                "status": question.status,
+
+            }
+        })
+        
 class SessionPulseView(APIView):
     def get(self, request, session_id):
         try:
