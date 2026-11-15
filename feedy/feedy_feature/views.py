@@ -97,6 +97,7 @@ class SessionQuestionsView(APIView):
             question_data = [
                 {
                     "id": question.id,
+                    "title": question.title,
                     "text": question.text,
                     "status": question.status,
                     "created_at": question.created_at,
@@ -114,6 +115,7 @@ class SessionQuestionsView(APIView):
     
     def post(self, request, session_id):
         participant_token = request.data.get("participant_token")
+        title = request.data.get("title", "").strip()
         text = request.data.get("text", "").strip()
 
         # Validate required fields
@@ -158,6 +160,7 @@ class SessionQuestionsView(APIView):
         question = Question.objects.create(
             session=session,
             participant=participant,
+            title=title,
             text=text
         )
 
@@ -166,6 +169,7 @@ class SessionQuestionsView(APIView):
                 "message": "Question submitted successfully",
                 "question": {
                     "id": question.id,
+                    "title": question.title,
                     "text": question.text,
                     "created_at": question.created_at
                 }
@@ -203,6 +207,7 @@ class UpdateQuestionStatusView(APIView):
             "message": "Question status updated successfully",
             "question": {
                 "id": question.id,
+                "title": question.title,
                 "text": question.text,
                 "status": question.status,
 
