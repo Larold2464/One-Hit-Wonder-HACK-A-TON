@@ -1,6 +1,6 @@
 // useQuestions.js
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getQuestions, createQuestion } from '../api/question'
+import { getQuestions, createQuestion, updateQuestion } from '../api/question'
 
 export function useQuestions(session_id) {
   return useQuery({
@@ -17,6 +17,16 @@ export function useCreateQuestion() {
     mutationFn: createQuestion,
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['questions', variables.session_id] })
+    },
+  })
+}
+
+export function useUpdateQuestion(session_id) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: updateQuestion,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['questions', session_id] })
     },
   })
 }
