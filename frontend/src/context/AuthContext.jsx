@@ -53,13 +53,6 @@ export function AuthProvider({ children }) {
     })
   }, [logout])
 
-  // Keep other open tabs in sync when one tab logs in or out.
-  useEffect(() => {
-    const onStorage = () => setToken(getAccessToken())
-    window.addEventListener('storage', onStorage)
-    return () => window.removeEventListener('storage', onStorage)
-  }, [])
-
   // what useMemo does is just make sure it doesn't get recalcuated everytime it is ran
   const value = useMemo(
     () => ({ token, isAuthenticated: Boolean(token), login, logout }),
