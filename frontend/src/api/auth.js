@@ -14,6 +14,13 @@ export async function registerUser({ username, email, password }) {
   })
 }
 
+export async function createSession({ title }) {
+  return apiClient('/sessions/', {
+    method: 'POST',
+    body: JSON.stringify({ title }),
+  })
+}
+
 export async function refreshToken({ refresh }) {
   return apiClient('/auth/token/refresh/', {
     method: 'POST',
